@@ -22,7 +22,7 @@ const items = [
   },
 ];
 
-const ease = [0.22, 1, 0.36, 1];
+const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function Testimonials() {
   const [i, setI] = useState(0);

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-const ease = [0.22, 1, 0.36, 1];
+const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   const headline = ["We Grow Brands", "While You're", "Out of Office."];

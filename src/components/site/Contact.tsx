@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { FormEvent, useState } from "react";
 import { toast } from "sonner";
 
-const ease = [0.22, 1, 0.36, 1];
+const ease = [0.22, 1, 0.36, 1] as const;
 
 function Field({
   label,

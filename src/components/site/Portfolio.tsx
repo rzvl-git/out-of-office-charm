@@ -15,7 +15,7 @@ const projects = [
   { img: p6, title: "Maru Coffee", tag: "Social", year: "2023" },
 ];
 
-const ease = [0.22, 1, 0.36, 1];
+const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function Portfolio() {
   return (

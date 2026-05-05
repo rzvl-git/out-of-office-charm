@@ -8,7 +8,7 @@ const services = [
   { n: "05", t: "SEO Optimization", d: "Technical SEO and content systems that earn durable visibility." },
 ];
 
-const ease = [0.22, 1, 0.36, 1];
+const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function Services() {
   return (
