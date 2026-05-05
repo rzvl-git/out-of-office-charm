@@ -1,12 +1,18 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   const headline = ["We Grow Brands", "While You're", "Out of Office."];
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const yText = useTransform(scrollYProgress, [0, 1], ["0%", "-15%"]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
-    <section id="top" className="relative min-h-screen w-full overflow-hidden noise bg-background">
+    <section ref={ref} id="top" className="relative min-h-screen w-full overflow-hidden noise bg-background">
       {/* Animated background — soft moving radial wash */}
       <motion.div
         aria-hidden
