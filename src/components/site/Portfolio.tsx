@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import p1 from "@/assets/portfolio-1.jpg";
 import p2 from "@/assets/portfolio-2.jpg";
 import p3 from "@/assets/portfolio-3.jpg";
@@ -17,59 +18,90 @@ const projects = [
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-export default function Portfolio() {
+function ProjectCard({ p, i }: { p: (typeof projects)[number]; i: number }) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  // Each card image gets its own parallax shift
+  const y = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  // Alternate vertical offset for an editorial feel on desktop
+  const offset = i % 2 === 0 ? "lg:translate-y-0" : "lg:translate-y-12";
+
   return (
-    <section id="work" className="relative py-32 md:py-48 border-t hairline">
-      <div className="mx-auto max-w-7xl px-6 md:px-10">
+    <motion.a
+      ref={ref}
+      href="#contact"
+      initial={{ opacity: 0, y: 60 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-10%" }}
+      transition={{ duration: 0.9, ease, delay: (i % 3) * 0.08 }}
+      className={`group block ${offset}`}
+    >
+      <div className="relative aspect-[4/5] overflow-hidden bg-muted">
+        <motion.img
+          src={p.img}
+          alt={p.title}
+          loading="lazy"
+          width={800}
+          height={1000}
+          style={{ y, scale: 1.15 }}
+          className="absolute inset-0 h-full w-full object-cover grayscale will-change-transform"
+        />
+        <motion.div
+          whileHover={{ scale: 1.04 }}
+          transition={{ duration: 1.2, ease }}
+          className="absolute inset-0"
+        >
+          <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/40 transition-colors duration-500" />
+          <div className="absolute inset-0 flex items-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            <div className="text-background">
+              <div className="text-xs uppercase tracking-[0.25em] mb-2">
+                {p.tag} · {p.year}
+              </div>
+              <div className="display text-2xl md:text-3xl font-light">{p.title}</div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+      <div className="mt-4 flex items-center justify-between">
+        <span className="text-sm font-medium">{p.title}</span>
+        <span className="text-xs text-muted-foreground tracking-wide">{p.tag}</span>
+      </div>
+    </motion.a>
+  );
+}
+
+export default function Portfolio() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  // Big horizontal slide on the heading as the section scrolls past
+  const headingX = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
+
+  return (
+    <section id="work" className="relative py-32 md:py-48 border-t hairline overflow-hidden">
+      <div ref={ref} className="mx-auto max-w-7xl px-6 md:px-10">
         <div className="flex items-end justify-between mb-16 md:mb-24 flex-wrap gap-6">
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-6">/ 03 — Selected Work</p>
+          <motion.div style={{ x: headingX }}>
+            <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-6">
+              / 03 — Selected Work
+            </p>
             <h2 className="display text-4xl md:text-6xl font-light max-w-2xl leading-[1.05]">
               Recent work, quietly considered.
             </h2>
-          </div>
-          <a href="#contact" className="text-sm border-b border-foreground pb-1 hover:gap-3">All projects →</a>
+          </motion.div>
+          <a href="#contact" className="text-sm border-b border-foreground pb-1">
+            All projects →
+          </a>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {projects.map((p, i) => (
-            <motion.a
-              key={p.title}
-              href="#contact"
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-10%" }}
-              transition={{ duration: 0.9, ease, delay: (i % 3) * 0.08 }}
-              className="group block"
-            >
-              <div className="relative aspect-[4/5] overflow-hidden bg-muted">
-                <motion.img
-                  src={p.img}
-                  alt={p.title}
-                  loading="lazy"
-                  width={800}
-                  height={1000}
-                  className="absolute inset-0 h-full w-full object-cover grayscale"
-                  whileHover={{ scale: 1.06 }}
-                  transition={{ duration: 1.2, ease }}
-                />
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/40 transition-colors duration-500" />
-                <motion.div
-                  initial={false}
-                  className="absolute inset-0 flex items-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                >
-                  <div className="text-background">
-                    <div className="text-xs uppercase tracking-[0.25em] mb-2">{p.tag} · {p.year}</div>
-                    <div className="display text-2xl md:text-3xl font-light">{p.title}</div>
-                  </div>
-                </motion.div>
-              </div>
-              <div className="mt-4 flex items-center justify-between">
-                <span className="text-sm font-medium">{p.title}</span>
-                <span className="text-xs text-muted-foreground tracking-wide">{p.tag}</span>
-              </div>
-            </motion.a>
+            <ProjectCard key={p.title} p={p} i={i} />
           ))}
         </div>
       </div>

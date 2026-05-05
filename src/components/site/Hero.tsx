@@ -1,15 +1,22 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   const headline = ["We Grow Brands", "While You're", "Out of Office."];
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const yText = useTransform(scrollYProgress, [0, 1], ["0%", "-15%"]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
-    <section id="top" className="relative min-h-screen w-full overflow-hidden noise bg-background">
-      {/* Animated background — soft moving radial wash */}
+    <section ref={ref} id="top" className="relative min-h-screen w-full overflow-hidden noise bg-background">
+      {/* Animated background — soft moving radial wash with parallax */}
       <motion.div
         aria-hidden
+        style={{ y: yBg, opacity: heroOpacity }}
         className="absolute inset-0 -z-0"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -19,7 +26,7 @@ export default function Hero() {
         <div className="absolute bottom-0 -right-32 w-[50vw] h-[50vw] rounded-full bg-foreground/[0.06] blur-3xl animate-drift" style={{ animationDelay: "-6s" }} />
       </motion.div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-10 pt-40 md:pt-48 pb-20 min-h-screen flex flex-col justify-between">
+      <motion.div style={{ y: yText }} className="relative z-10 mx-auto max-w-7xl px-6 md:px-10 pt-40 md:pt-48 pb-20 min-h-screen flex flex-col justify-between">
         <div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -75,7 +82,7 @@ export default function Hero() {
             </a>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Scroll indicator */}
       <motion.div
