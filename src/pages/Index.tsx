@@ -5,6 +5,7 @@ import Hero from "@/components/site/Hero";
 import Loader from "@/components/site/Loader";
 import Marquee from "@/components/site/Marquee";
 import Navbar from "@/components/site/Navbar";
+import ScrollProgress from "@/components/site/ScrollProgress";
 import Portfolio from "@/components/site/Portfolio";
 import SectionReveal from "@/components/site/SectionReveal";
 import Services from "@/components/site/Services";
@@ -16,6 +17,7 @@ const Index = () => {
   return (
     <>
       <Loader />
+      <ScrollProgress />
       <Navbar />
       <motion.main
         initial={{ opacity: 0 }}
